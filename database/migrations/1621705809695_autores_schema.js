@@ -9,7 +9,8 @@ class AutoresSchema extends Schema {
       table.increments('id').primary()
       table.string('nome', 50)
       table.string('email')
-      table.integer('cidade_id').unsigned().references('id').inTable('cidades').onDelete('CASCADE')
+      table.integer('cidade_id')
+      .unsigned().references('id').inTable('cidades').onDelete('CASCADE').onUpdate('CASCADE')
       table.timestamps()
     })
   }

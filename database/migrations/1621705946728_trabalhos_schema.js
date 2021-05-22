@@ -6,10 +6,10 @@ const Schema = use('Schema')
 class TrabalhosSchema extends Schema {
   up () {
     this.create('trabalhos', (table) => {
-      table.increments('id').primary()
+      table.increments('id')
       table.string('titulo', 20)
       table.string('palavras_chaves', 20)
-      table.string('texto')
+      table.string('texto', 255)
       table.timestamps()
     })
   }
