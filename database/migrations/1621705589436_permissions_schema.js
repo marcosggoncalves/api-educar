@@ -6,13 +6,17 @@ const Schema = use('Schema')
 class PermissionsSchema extends Schema {
   up () {
     this.create('permissions', (table) => {
-      table.increments()
+      table.increments('id')
+      table.string('nome', 50)
+      table.string('rota_api', 50)
+      table.string('rota_web', 50)
+      table.string('is_menu', 50)
       table.timestamps()
     })
   }
 
   down () {
-    this.drop('permissions')
+    this.dropIfExists('permissions')
   }
 }
 

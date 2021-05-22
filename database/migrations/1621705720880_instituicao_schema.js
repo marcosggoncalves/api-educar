@@ -5,8 +5,11 @@ const Schema = use('Schema')
 
 class InstituicaoSchema extends Schema {
   up () {
-    this.create('instituicaos', (table) => {
-      table.increments()
+    this.create('instituicao', (table) => {
+      table.increments('id').primary()
+      table.string('nome', 50)
+      table.integer('cidade_id').unsigned()
+      .references('id').inTable('cidades').onUpdate('CASCADE').onDelete('CASCADE')
       table.timestamps()
     })
   }

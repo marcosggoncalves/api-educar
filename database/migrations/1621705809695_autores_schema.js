@@ -6,7 +6,10 @@ const Schema = use('Schema')
 class AutoresSchema extends Schema {
   up () {
     this.create('autores', (table) => {
-      table.increments()
+      table.increments('id').primary()
+      table.string('nome', 50)
+      table.string('email')
+      table.integer('cidade_id').unsigned().references('id').inTable('cidades').onDelete('CASCADE')
       table.timestamps()
     })
   }

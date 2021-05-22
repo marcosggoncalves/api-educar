@@ -6,7 +6,7 @@ const Schema = use('Schema')
 class OrganizationsSchema extends Schema {
   up () {
     this.create('organizations', (table) => {
-      table.increments()
+      table.increments('id')
       table.timestamps()
     })
   }
