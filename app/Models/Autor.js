@@ -4,6 +4,15 @@
 const Model = use('Model')
 
 class Autor extends Model {
+
+    static get table() {
+        return 'cidades'
+    }
+
+    static set primaryKey() {
+        return 'id'
+    }
 }
+
 
 module.exports = Autor

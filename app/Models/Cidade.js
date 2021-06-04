@@ -4,6 +4,14 @@
 const Model = use('Model')
 
 class Cidade extends Model {
+
+    static get table() {
+        return 'cidades'
+    }
+
+    static set primaryKey() {
+        return 'id'
+    }
 }
 
 module.exports = Cidade

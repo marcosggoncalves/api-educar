@@ -29,4 +29,21 @@ Route.group(() => {
   Route.delete('instituicao/:id', 'InstituicaoController.delete')
 }).prefix('api/v1')
 
+Route.group(() => {
+  Route.post('autor', 'AutorController.store')
+  Route.get('autor', 'AutorController.index')
+  Route.get('autor/:id', 'AutorController.show')
+  Route.put('autor/:id', 'AutorController.update')
+  Route.delete('autor/:id', 'AutorController.delete')
+}).prefix('api/v1')
+
+Route.group(() => {
+  Route.post('cidade', 'CidadeController.store')
+  Route.get('cidade', 'CidadeController.index')
+  Route.get('cidade/:id', 'CidadeController.show')
+  Route.put('cidade/:id', 'CidadeController.update')
+  Route.delete('cidade/:id', 'CidadeController.delete')
+}).prefix('api/v1')
+
+
 

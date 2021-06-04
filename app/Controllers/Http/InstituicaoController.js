@@ -13,7 +13,7 @@ class InstituicaoController {
         return response.json(books)
       }
 
-      async show ({params, response}) {
+      async show ({ params, response }) {
         const book = await Book.find(params.id)
 
         return response.json(book)
@@ -36,7 +36,7 @@ class InstituicaoController {
 
         const book = await Book.find(params.id)
         if (!book) {
-          return response.status(404).json({data: 'Resource not found'})
+          return response.status(404).json({data: 'página não encontrada'})
         }
         book.name = bookInfo.name
         
@@ -49,7 +49,7 @@ class InstituicaoController {
 
         const book = await Book.find(params.id)
         if (!book) {
-          return response.status(404).json({data: 'Resource not found'})
+          return response.status(404).json({data: 'página não encontrada'})
         }
         await book.delete()
 
