@@ -22,6 +22,14 @@ Route.resource('autor', '')
 Route.resource('cidade', '')
 
 Route.group(() => {
+  Route.post('users', 'UserController.store')
+  Route.get('users', 'UserController.index')
+  Route.get('users/:id', 'UserController.show')
+  Route.put('users/:id', 'UserController.update')
+  Route.delete('users/:id', 'UserController.delete')
+}).prefix('api/v1')
+
+Route.group(() => {
   Route.post('instituicao', 'InstituicaoController.store')
   Route.get('instituicao', 'InstituicaoController.index')
   Route.get('instituicao/:id', 'InstituicaoController.show')

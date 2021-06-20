@@ -5,7 +5,7 @@ class CidadeController {
 
     async index({ response }){
 
-        let city = await City.all()
+        const city = await City.all()
 
         return response.json(city)
     }

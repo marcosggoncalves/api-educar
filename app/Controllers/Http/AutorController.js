@@ -6,9 +6,19 @@ class AutorController {
 
     async index({ response }){
 
-        let autor = await Autor.all()
+        const autor = await Autor.query()
+        .with('cidades')
+        .fetch()
 
         return response.json(autor)
+    }
+
+    async store({ request }) {
+        const data = request.only(['nome' ,'email'])
+        
+        const autor = await Autor.create(data)
+
+        return autor
     }
 }
 

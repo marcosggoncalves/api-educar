@@ -2,6 +2,7 @@
 
 /** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
 const Model = use('Model')
+const Cidade = use('App/Models/Cidade')
 
 class Instituicao extends Model {
 
@@ -9,9 +10,14 @@ class Instituicao extends Model {
         return 'instituicao'
     }
 
-     static set primaryKey (id) {
-         return id
+     static get primaryKey () {
+         return 'id'
      }
+
+     cidade () {
+         return this.hasOne(Cidade)
+     }
+     
 }
 
 module.exports = Instituicao
