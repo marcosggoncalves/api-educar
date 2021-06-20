@@ -6,11 +6,14 @@ const Model = use('Model')
 class Autor extends Model {
 
     static get table() {
-        return 'cidades'
+        return 'autores'
     }
 
-    static set primaryKey() {
+    static get primaryKey() {
         return 'id'
+    }
+    cidade(){
+        return this.belongsTo('App/Models/Cidade')
     }
 }
 
