@@ -7,10 +7,19 @@ class AutoresSchema extends Schema {
   up () {
     this.create('autores', (table) => {
       table.increments('id').primary()
+      table.integer('trabalho_id')
+      .unsigned()
+      .references('id')
+      .inTable('trabalhos')
+      .onDelete('CASCADE')
+      .onUpdate('CASCADE')
       table.string('nome', 50)
       table.string('email')
       table.integer('cidade_id')
-      .unsigned().references('id').inTable('cidades').onDelete('CASCADE').onUpdate('CASCADE')
+      .unsigned()
+      .references('id')
+      .inTable('cidades')
+      .onDelete('CASCADE').onUpdate('CASCADE')
       table.timestamps()
     })
   }
