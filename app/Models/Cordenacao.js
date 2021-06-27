@@ -8,6 +8,12 @@ class Cordenacao extends Model {
     avaliador() {
         return this.hasMany('App/Models/Avaliador')
     }
+    trabalhos() {
+        return this.hasMany('App/Models/Trabalho')
+    }
+    autores(){
+        return this.hasMany('App/Models/Autor')
+    }
 
 }
 
