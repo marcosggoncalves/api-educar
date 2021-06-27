@@ -7,85 +7,39 @@
 /**
  * Resourceful controller for interacting with cordenacaos
  */
+const Cordenacao = use('App/Models/Cordenacao')
 class CordenacaoController {
-  /**
-   * Show a list of all cordenacaos.
-   * GET cordenacaos
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async index ({ request, response, view }) {
+  
+  async index ({ request, response }) {
+      const data = await Cordenacao.all()
+
+      response.status(200).json({
+        message: 'seus dados',
+        data: data
+      })
   }
 
-  /**
-   * Render a form to be used for creating a new cordenacao.
-   * GET cordenacaos/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
-  }
 
-  /**
-   * Create/save a new cordenacao.
-   * POST cordenacaos
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
+ 
   async store ({ request, response }) {
+    const { nome, password, email, avaliador_id, trabalho_id } = request.post()
+
+    const data = await Cordenacao.create({ nome, password, email, avaliador_id, trabalho_id })
+
+    return data
   }
 
-  /**
-   * Display a single cordenacao.
-   * GET cordenacaos/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async show ({ params, request, response, view }) {
+  async show ({ request, response}) {
+      response.status(200).json({
+        message: 'Seus registros',
+        data: request.post().job
+    })
   }
 
-  /**
-   * Render a form to update an existing cordenacao.
-   * GET cordenacaos/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit ({ params, request, response, view }) {
-  }
 
-  /**
-   * Update cordenacao details.
-   * PUT or PATCH cordenacaos/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
   async update ({ params, request, response }) {
   }
 
-  /**
-   * Delete a cordenacao with id.
-   * DELETE cordenacaos/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
   async destroy ({ params, request, response }) {
   }
 }

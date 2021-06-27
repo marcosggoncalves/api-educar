@@ -4,6 +4,14 @@
 const Model = use('Model')
 
 class Trabalho extends Model {
+
+    autor() {
+        return this.belongsTo('App/Models/Autor')
+    }
+    
+    avaliadores() {
+        return this.hasMany('App/Models/Avaliador')
+    }
 }
 
 module.exports = Trabalho

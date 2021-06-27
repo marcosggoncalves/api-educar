@@ -3,14 +3,20 @@
 /** @type {import('@adonisjs/lucid/src/Schema')} */
 const Schema = use('Schema')
 
-class CordenacaoSchema extends Schema {
+class CordenadoresSchema extends Schema {
   up () {
-    this.create('cordenacao', (table) => {
+    this.create('cordenadores', (table) => {
       table.increments()
       table.string('nome')
-      table.string('email')
       table.string('password')
+      table.string('email')
       table.integer('avaliador_id')
+      .unsigned()
+      .references('id')
+      .inTable('avaliadores')
+      .onDelete('CASCADE')
+      .onUpdate('CASCADE')
+      table.integer('trabalho_id')
       .unsigned()
       .references('id')
       .inTable('trabalhos')
@@ -21,8 +27,8 @@ class CordenacaoSchema extends Schema {
   }
 
   down () {
-    this.drop('cordenacaos')
+    this.drop('cordenadores')
   }
 }
 
-module.exports = CordenacaoSchema
+module.exports = CordenadoresSchema
