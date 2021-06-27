@@ -1,12 +1,5 @@
 'use strict'
 
-/** @typedef {import('@adonisjs/framework/src/Request')} Request */
-/** @typedef {import('@adonisjs/framework/src/Response')} Response */
-/** @typedef {import('@adonisjs/framework/src/View')} View */
-
-/**
- * Resourceful controller for interacting with cordenacaos
- */
 const Cordenacao = use('App/Models/Cordenacao')
 class CordenacaoController {
   
@@ -22,17 +15,31 @@ class CordenacaoController {
 
  
   async store ({ request, response }) {
-    const { nome, password, email, avaliador_id, trabalho_id } = request.post()
+    const { nome, password, email, status, avaliador_id, trabalho_id } = request.post()
 
-    const data = await Cordenacao.create({ nome, password, email, avaliador_id, trabalho_id })
+    const data = await Cordenacao.create({ 
+       nome,
+       password,
+        email, 
+        status, 
+        avaliador_id, 
+        trabalho_id 
+      })
 
-    return data
+      response.status(201).json({
+        message: 'Salvo com sucesso!!',
+        data: data
+      })
+
   }
 
-  async show ({ request, response}) {
+  async show ({ request, response }) {
+    const job = await Cordenacao.findOrFail(id)
+
       response.status(200).json({
         message: 'Seus registros',
         data: request.post().job
+
     })
   }
 
