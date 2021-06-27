@@ -5,29 +5,33 @@ const Schema = use('Schema')
 
 class CordenadoresSchema extends Schema {
   up () {
-    this.create('cordenadores', (table) => {
+    this.create('cordenacaos', (table) => {
       table.increments()
       table.string('nome')
-      table.string('password')
-      table.string('email')
+      table.string('password').notNullable()
+      table.string('email').notNullable().unique()
+      table.string('status')
       table.integer('avaliador_id')
       .unsigned()
       .references('id')
-      .inTable('avaliadores')
-      .onDelete('CASCADE')
+      .inTable('avaliadors')
       .onUpdate('CASCADE')
       table.integer('trabalho_id')
       .unsigned()
       .references('id')
       .inTable('trabalhos')
-      .onDelete('CASCADE')
+      .onUpdate('CASCADE')
+      table.integer('autor_id')
+      .unsigned()
+      .references('id')
+      .inTable('autors')
       .onUpdate('CASCADE')
       table.timestamps()
     })
   }
 
   down () {
-    this.drop('cordenadores')
+    this.drop('cordenacaos')
   }
 }
 

@@ -1,31 +1,27 @@
 'use strict'
 
-
 /** @type {import('@adonisjs/lucid/src/Schema')} */
-
-
 const Schema = use('Schema')
 
-class AvaliadoresSchema extends Schema {
+class AutoresSchema extends Schema {
   up () {
-    this.create('avaliadores', (table) => {
-      table.increments()
-      table.string('nome')
-      table.string('email')
-      table.string('password')
+    this.create('autors', (table) => {
+      table.increments('id').primary()
       table.integer('trabalho_id')
       .unsigned()
       .references('id')
       .inTable('trabalhos')
-      .onDelete('CASCADE')
       .onUpdate('CASCADE')
+      table.string('nome', 50)
+      table.string('email')
+      table.string('password')
       table.timestamps()
     })
   }
 
   down () {
-    this.drop('avaliadores')
+    this.drop('autors')
   }
 }
 
-module.exports = AvaliadoresSchema
+module.exports = AutoresSchema
