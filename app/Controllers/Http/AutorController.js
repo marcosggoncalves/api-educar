@@ -6,9 +6,13 @@ class AutorController {
 
     async index({ response }){
 
-        const autor = await Autor.query()
-        .with('cidades')
-        .fetch()
+        const autor = await Autor.all()
+
+        response.status(200).json({
+          message: 'seus dados',
+          data: autor
+        })
+        
 
         return response.json(autor)
     }

@@ -11,8 +11,8 @@ class AvaliadoresSchema extends Schema {
     this.create('avaliadors', (table) => {
       table.increments()
       table.string('nome')
-      table.string('email')
-      table.string('password')
+      table.string('email').notNullable().unique()
+      table.string('password').notNullable()
       table.integer('trabalho_id')
       .unsigned()
       .references('id')

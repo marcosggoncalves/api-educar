@@ -8,8 +8,8 @@ class CordenadoresSchema extends Schema {
     this.create('cordenacaos', (table) => {
       table.increments()
       table.string('nome')
-      table.string('password')
-      table.string('email')
+      table.string('password').notNullable()
+      table.string('email').notNullable().unique()
       table.string('status')
       table.integer('avaliador_id')
       .unsigned()
