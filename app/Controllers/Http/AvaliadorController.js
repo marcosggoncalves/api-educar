@@ -49,14 +49,7 @@ class AvaliadorController {
     })
   }
 
-  /**
-   * Delete a avaliador with id.
-   * DELETE avaliadors/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
+
   async destroy ({ params, request, response }) {
   }
 }

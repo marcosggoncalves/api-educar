@@ -17,6 +17,7 @@ class CordenacaoController {
  
   async store ({ request, response, session  }) {
     const { nome, password, email, status, avaliador_id, trabalho_id } = request.post()
+    
     const rules = {
       email: 'required|email|unique:cordenacaos,email',
       status: 'nullable',
@@ -47,18 +48,37 @@ class CordenacaoController {
 
   }
 
-  async show ({ request, response }) {
-    const job = await Cordenacao.findOrFail(id)
+  async show ({ request, response , params: {id}}) {
+    const cord = await Cordenacao.query()
+    .where('id', id)
+    .with('trabalhos')
+    .first()
 
-      response.status(200).json({
-        message: 'Seus registros',
-        data: request.post().job
-
-    })
+    if (cord) {
+      return response.status(200).json({
+        data:cord
+      })
+    }
   }
 
 
-  async update ({ params, request, response }) {
+  async update ({ params: { id }, request, response }) {
+    const cord = await Cordenacao.find(id)
+
+    const { nome, password, email, status } = request.post()
+
+    cord.nome = nome 
+    cord.password = password
+    cord.email = email
+    cord.status = status
+     
+    const success = await cord.save()
+
+    if (success) {
+      return response.status(200).json({
+        data: cord
+      })
+    }
   }
 
   async destroy ({ params, request, response }) {
