@@ -23,7 +23,7 @@ module.exports = {
   | Sqlite
   |--------------------------------------------------------------------------
   |
-  | Sqlite is a flat file database and can be a good choice for a development
+  | Sqlite is a flat file database and can be good choice under development
   | environment.
   |
   | npm i --save sqlite3
@@ -34,8 +34,7 @@ module.exports = {
     connection: {
       filename: Helpers.databasePath(`${Env.get('DB_DATABASE', 'development')}.sqlite`)
     },
-    useNullAsDefault: true,
-    debug: Env.get('DB_DEBUG', false)
+    useNullAsDefault: true
   },
 
   /*
@@ -56,8 +55,7 @@ module.exports = {
       user: Env.get('DB_USER', 'root'),
       password: Env.get('DB_PASSWORD', ''),
       database: Env.get('DB_DATABASE', 'adonis')
-    },
-    debug: Env.get('DB_DEBUG', false)
+    }
   },
 
   /*
@@ -77,8 +75,7 @@ module.exports = {
       port: Env.get('DB_PORT', ''),
       user: Env.get('DB_USER', 'root'),
       password: Env.get('DB_PASSWORD', ''),
-      database: Env.get('DB_DATABASE', 'postgres')
-    },
-    debug: Env.get('DB_DEBUG', false)
+      database: Env.get('DB_DATABASE', 'adonis')
+    }
   }
 }

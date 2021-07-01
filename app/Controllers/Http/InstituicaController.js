@@ -3,23 +3,22 @@
 const { validateAll } = use('Validator');
 const Database = use('Database');
 const util = require('../../Utils/Util.js');
-const cidadeModel = use('App/Models/Cidade');
+const instituicaoModel = use('App/Models/Instituica');
 
-class CidadeController {
-
-  async index({ request, response }) {
+class InstituicaController {
+  async index({request, response}){
     const page = request.input('page', 1); // Iniciar paginação na página 1
 
     return response.status(200).send({
-      status: true,
-      cidades: await cidadeModel.query().orderBy("nome", "asc").paginate(page, 25)
+        status: true,
+        instituicoes: await instituicaoModel.query().orderBy("nome","asc").paginate(page, 25)
     });
   }
 
-  async selectInputCidades({ request, response }) {
+  async selectInputInstituicao({request, response}){
     return response.status(200).send({
-      status: true,
-      cidades: await cidadeModel.all()
+        status: true,
+        instituicoes: await instituicaoModel.all()
     });
   }
 
@@ -27,12 +26,12 @@ class CidadeController {
     try {
       const message = {
         'nome.required': 'Esse campo é obrigatorio',
-        'uf.required': 'Esse campo é obrigatorio'
+        'cidade_id.required': 'Esse campo é obrigatorio'
       };
 
       const validation = await validateAll(request.all(), {
         nome: 'required',
-        uf: 'required',
+        cidade_id: 'required',
       }, message);
 
       if (validation.fails()) {
@@ -47,23 +46,23 @@ class CidadeController {
 
       const data = request.only([
         "nome",
-        "uf"
+        "cidade_id"
       ]);
 
-      const cidade = await cidadeModel.create(data);
+      const instituicao = await instituicaoModel.create(data);
 
       response.status(200).send(
         {
           status: true,
-          message: 'Cidade adicionada!',
-          cidade: cidade
+          message: 'Institução adicionada!',
+          instituicao: instituicao
         }
       );
     } catch (error) {
       return response.status(500).send(
         {
           status: false,
-          message: 'Não foi possivel adicionar cidade!'
+          message: 'Não foi possivel adicionar instituição!'
         }
       );
     }
@@ -73,12 +72,12 @@ class CidadeController {
     try {
       const message = {
         'nome.required': 'Esse campo é obrigatorio',
-        'uf.required': 'Esse campo é obrigatorio'
+        'cidade_id.required': 'Esse campo é obrigatorio'
       };
 
       const validation = await validateAll(request.all(), {
         nome: 'required',
-        uf: 'required',
+        cidade_id: 'required',
       }, message);
 
       if (validation.fails()) {
@@ -93,23 +92,23 @@ class CidadeController {
 
       const data = request.only([
         "nome",
-        "uf"
+        "cidade_id"
       ]);
 
-      const cidade = await cidadeModel.query().where('id', params.id).update(data).returning('*');
+      const instituicao = await instituicaoModel.query().where('id', params.id).update(data).returning('*');
 
       response.status(200).send(
         {
           status: true,
           message: 'Alteração realizada!',
-          cidade: cidade
+          instituicao: instituicao
         }
       );
     } catch (error) {
       return response.status(500).send(
         {
           status: false,
-          message: 'Não foi alterar cidade!'
+          message: 'Não foi alterar!'
         }
       );
     }
@@ -117,23 +116,23 @@ class CidadeController {
 
   async delete({ params, request, response, auth }) {
     try {
-      await Database.table('cidade').where('id', params.id).delete().returning('*');
-
+      await Database.table('instituicao').where('id', params.id).delete().returning('*');
+    
       response.status(200).send(
         {
           status: true,
-          message: 'Cidade foi excluida!'
+          message: 'Instituicao foi excluida!'
         }
       );
     } catch (error) {
       return response.status(200).send(
         {
           status: false,
-          message: 'Não foi possivel excluir cidade!'
+          message: 'Não foi possivel excluir!'
         }
       );
     }
   }
 }
 
-module.exports = CidadeController
+module.exports = InstituicaController

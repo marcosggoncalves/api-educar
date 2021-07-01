@@ -3,10 +3,10 @@
 /** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
 const Model = use('Model')
 
-class Trabalho extends Model {
+class Instituica extends Model {
     static get table(){
-        return 'trabalho';
+        return 'instituicao';
     }
 }
 
-module.exports = Trabalho
+module.exports = Instituica

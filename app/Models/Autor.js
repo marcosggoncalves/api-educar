@@ -4,11 +4,9 @@
 const Model = use('Model')
 
 class Autor extends Model {
-
-   trabalho() {
-       return this.belongsTo('App/Models/Trabalho')
-   }
+    static get table(){
+        return 'autor';
+    }
 }
-
 
 module.exports = Autor

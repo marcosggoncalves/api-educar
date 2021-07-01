@@ -1,5 +1,6 @@
 'use strict'
 
+/** @type {import('@adonisjs/framework/src/Env')} */
 const Env = use('Env')
 
 module.exports = {
@@ -64,8 +65,8 @@ module.exports = {
   */
   cookie: {
     httpOnly: true,
-    path: '/',
-    sameSite: false
+    sameSite: false,
+    path: '/'
   },
 
   /*
@@ -86,7 +87,8 @@ module.exports = {
   | Redis config
   |--------------------------------------------------------------------------
   |
-  | The configuration for the redis driver.
+  | The configuration for the redis driver. By default we reference it from
+  | the redis file. But you are free to define an object here too.
   |
   */
   redis: {

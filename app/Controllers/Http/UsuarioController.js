@@ -3,43 +3,43 @@
 const { validateAll } = use('Validator');
 const Database = use('Database');
 const util = require('../../Utils/Util.js');
-const AutorModel = use('App/Models/Autor');
-const AutorTrabalhoModel = use('App/Models/AutorTrabalho');
+const usuarioModel = use('App/Models/Usuario');
 
-class AutorController {
-
+class UsuarioController {
   async index({ request, response }) {
-    const page = request.input("page", 1);
-
-    const autores = await Database
-      .select('autor.*', 'trabalho.titulo')
-      .from('autor')
-      .innerJoin('autor_trabalho', 'autor.id', 'autor_trabalho.autor_id')
-      .innerJoin('trabalho', 'trabalho.id', 'autor_trabalho.trabalho_id')
-      .orderBy('autor.nome', 'asc')
+    const page = request.input('page', 1); // Iniciar paginação na página 1
+    const usuarios = await Database
+      .select('usuario.id','usuario.email', 'usuario.tipo_usuario', 'usuario.nome', 'usuario.grupo_id', 'grupo.nome as grupo_acesso', 'instituicao.nome as instituicao_nome')
+      .from('usuario')
+      .innerJoin('grupo', 'grupo.id', 'usuario.grupo_id')
+      .innerJoin('instituicao', 'instituicao.id', 'usuario.instituicao_id')
+      .orderBy('grupo.nome', 'asc')
       .paginate(page, 25);
 
     return response.status(200).send({
       status: true,
-      autores: autores
+      usuarios: usuarios
     });
   }
 
   async save({ request, response, auth }) {
-    /// Abrir transação
-    const connection = await Database.beginTransaction();
-
     try {
       const message = {
         'nome.required': 'Esse campo é obrigatorio',
+        'senha.required': 'Esse campo é obrigatorio',
         'email.required': 'Esse campo é obrigatorio',
-        'trabalho_id.required': 'Esse campo é obrigatorio'
+        'grupo_id.required': 'Esse campo é obrigatorio',
+        'tipo_usuario.required': 'Esse campo é obrigatorio',
+        'instituicao_id.required': 'Esse campo é obrigatorio'
       };
 
       const validation = await validateAll(request.all(), {
         nome: 'required',
+        senha: 'required',
         email: 'required',
-        trabalho_id: 'required',
+        grupo_id: 'required',
+        tipo_usuario: 'required',
+        instituicao_id: 'required',
       }, message);
 
       if (validation.fails()) {
@@ -54,37 +54,27 @@ class AutorController {
 
       const data = request.only([
         "nome",
+        "senha",
         "email",
-        "trabalho_id"
+        "grupo_id",
+        "tipo_usuario",
+        "instituicao_id"
       ]);
-      /// Cadastrar autor
-      const autor = await AutorModel.create({
-        nome: data.nome,
-        email: data.email
-      }, connection);
-      /// Vincular autor com o trabalho
-      const vinculoTrabalho = await AutorTrabalhoModel.create({
-        trabalho_id: data.trabalho_id,
-        autor_id: autor.id
-      }, connection);
-      /// Comitar inserts no banco de dados
-      await connection.commit();
-      /// Responder frontend
+
+      const usuario = await usuarioModel.create(data);
+
       response.status(200).send(
         {
           status: true,
-          message: 'Autor adicionado!',
-          autor: autor,
-          vinculo_trabalho: vinculoTrabalho
+          message: 'Seu cadastro foi realizado! Acesse o painel',
+          usuario: usuario
         }
       );
     } catch (error) {
-      await connection.rollback();
-
       return response.status(500).send(
         {
           status: false,
-          message: error.message
+          message: 'Não foi possivel adicionar, seu email já pode estar sendo utilizado /ou alguma informação esta incorreta!'
         }
       );
     }
@@ -94,12 +84,20 @@ class AutorController {
     try {
       const message = {
         'nome.required': 'Esse campo é obrigatorio',
-        'email.required': 'Esse campo é obrigatorio'
+        'senha.required': 'Esse campo é obrigatorio',
+        'email.required': 'Esse campo é obrigatorio',
+        'grupo_id.required': 'Esse campo é obrigatorio',
+        'tipo_usuario.required': 'Esse campo é obrigatorio',
+        'instituicao_id.required': 'Esse campo é obrigatorio'
       };
 
       const validation = await validateAll(request.all(), {
         nome: 'required',
+        senha: 'required',
         email: 'required',
+        grupo_id: 'required',
+        tipo_usuario: 'required',
+        instituicao_id: 'required',
       }, message);
 
       if (validation.fails()) {
@@ -114,23 +112,27 @@ class AutorController {
 
       const data = request.only([
         "nome",
-        "email"
+        "senha",
+        "email",
+        "grupo_id",
+        "tipo_usuario",
+        "instituicao_id"
       ]);
 
-      const autor = await AutorModel.query().where('id', params.id).update(data).returning('*');
+      const usuario = await usuarioModel.query().where('id', params.id).update(data).returning('*');
 
       response.status(200).send(
         {
           status: true,
           message: 'Alteração realizada!',
-          autor: autor
+          usuario: usuario
         }
       );
     } catch (error) {
       return response.status(500).send(
         {
           status: false,
-          message: error.message
+          message: 'Não foi alterar!'
         }
       );
     }
@@ -138,24 +140,23 @@ class AutorController {
 
   async delete({ params, request, response, auth }) {
     try {
-      await Database.table('autor_trabalho').where('autor_id', params.id).delete().returning('*');
-      await Database.table('autor').where('id', params.id).delete().returning('*');
+      await Database.table('usuario').where('id', params.id).delete().returning('*');
 
       response.status(200).send(
         {
           status: true,
-          message: 'Autor removido!'
+          message: 'Usuário foi excluido!'
         }
       );
     } catch (error) {
       return response.status(200).send(
         {
           status: false,
-          message: error.message
+          message: 'Não foi possivel excluir!'
         }
       );
     }
   }
 }
 
-module.exports = AutorController
+module.exports = UsuarioController

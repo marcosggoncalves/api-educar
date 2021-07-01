@@ -6,7 +6,7 @@
 |--------------------------------------------------------------------------
 |
 | Http routes are entry points to your web application. You can create
-| routes for different URLs and bind Controller actions to them.
+| routes for different URL's and bind Controller actions to them.
 |
 | A complete guide on routing is available here.
 | http://adonisjs.com/docs/4.1/routing
@@ -16,64 +16,67 @@
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
 
-
-Route.resource('trabalho', '')
-Route.resource('autor', '')
-Route.resource('cidade', '')
-Route.resource('cordenacao', '')
-Route.resource('avaliador', '')
-
-//todas as rotas devem ter prefixo /api
-
 Route.group(() => {
-  Route.post('users', 'UserController.store')
-  Route.get('users', 'UserController.index')
-  Route.get('users/:id', 'UserController.show')
-  Route.put('users/:id', 'UserController.update')
-  Route.delete('users/:id', 'UserController.delete')
-}).prefix('api')
-
-Route.group(() => {
-  Route.post('instituicao', 'InstituicaoController.store')
-  Route.get('instituicao', 'InstituicaoController.index')
-  Route.get('instituicao/:id', 'InstituicaoController.show')
-  Route.put('instituicao/:id', 'InstituicaoController.update')
-  Route.delete('instituicao/:id', 'InstituicaoController.delete')
-}).prefix('api')
-
-Route.group(() => {
-  Route.post('autor', 'AutorController.store')
-  Route.get('autor', 'AutorController.index')
-  Route.get('autor/:id', 'AutorController.show')
-  Route.put('autor/:id', 'AutorController.update')
-  Route.delete('autor/:id', 'AutorController.delete')
-}).prefix('api')
-
-Route.group(() => {
-  Route.post('avaliador', 'AvaliadorController.store')
-  Route.get('avaliador', 'AvaliadorController.index')
-  Route.get('avaliador/:id', 'AvaliadorController.show')
-  Route.put('avaliador/:id', 'AvaliadorController.update')
-  Route.delete('avaliador/:id', 'AvaliadorController.delete')
-}).prefix('api')
-
-Route.group(() => {
-  Route.post('cordenacao', 'CordenacaoController.store')
-  Route.get('cordenacao', 'CordenacaoController.index')
-  Route.get('cordenacao/:id', 'CordenacaoController.show')
-  Route.put('cordenacao/:id', 'CordenacaoController.update')
-  Route.delete('cordenacao/:id', 'CordenacaoController.delete')
-}).prefix('api')
-
-Route.group(() => {
-  Route.post('trabalho', 'TrabalhoController.store')
-  Route.get('trabalho', 'TrabalhoController.index')
-  Route.get('trabalho/:id', 'TrabalhoController.show')
-  Route.put('trabalho/:id', 'TrabalhoController.update')
-  Route.delete('trabalho/:id', 'TrabalhoController.delete')
-}).prefix('api')
-
-
-
-
-
+    /// Trabalho
+    Route.post('/submeter-trabalho', 'TrabalhoController.submeterTrabalho').middleware(['auth']);
+    Route.post('/submeter-arquivo', 'TrabalhoController.submeterTrabalhoArquivo').middleware(['auth']);
+    Route.post('/avaliar/:id', 'TrabalhoController.avaliarTrabalhoSubmetido').middleware(['auth']);
+    Route.post('/encaminhar-trabalho/avaliador', 'TrabalhoController.encaminhaTrabalhorAvaliador').middleware(['auth']);
+    Route.get('/coordenacao-trabalhos', 'TrabalhoController.trabalhosSemAvaliadorCoordenador').middleware(['auth','permissao']);
+    Route.get('/avaliador-trabalhos/:id', 'TrabalhoController.trabalhosSeremAvaliados').middleware(['auth','permissao']);
+    Route.get('/meus-trabalhos-submetidos/:usuario', 'TrabalhoController.meuTrabalhosSubmetidos').middleware(['auth','permissao']);
+    Route.get('/visualizar-trabalho/:trabalho', 'TrabalhoController.visualizarTrabalho').middleware(['auth','permissao']);
+    Route.get('/visualizar-trabalho-detalhado/:trabalho', 'TrabalhoController.visualizarTrabalhoDetalhado').middleware(['auth','permissao']);
+    Route.get('/trabalhos-recebidos', 'TrabalhoController.index').middleware(['auth','permissao']);
+    // -------------------------- Fim -----------------------------------
+    /// Autor
+    Route.get('/autores', 'AutorController.index').middleware(['auth','permissao']);
+    Route.post('/novo-autor', 'AutorController.save').middleware(['auth']);
+    Route.post('/alterar-autor/:id', 'AutorController.edit').middleware(['auth']);
+    Route.delete('/excluir-autor/:id', 'AutorController.delete').middleware(['auth']);
+    // -------------------------- Fim -----------------------------------
+    /// Cidade
+    Route.get('/cidades', 'CidadeController.index').middleware(['auth','permissao']);
+    Route.post('/alterar-cidade/:id', 'CidadeController.edit').middleware(['auth']);
+    Route.post('/nova-cidade', 'CidadeController.save').middleware(['auth']);
+    Route.delete('/excluir-cidade/:id', 'CidadeController.delete').middleware(['auth']);
+    // -------------------------- Fim -----------------------------------
+    /// Instituição
+    Route.get('/instituicoes', 'InstituicaController.index').middleware(['auth','permissao']);
+    Route.post('/alterar-instituicao/:id', 'InstituicaController.edit').middleware(['auth']);
+    Route.post('/nova-instituicao', 'InstituicaController.save').middleware(['auth']);
+    Route.delete('/excluir-instituicao/:id', 'InstituicaController.delete').middleware(['auth']);
+    // -------------------------- Fim -----------------------------------
+    /// Grupo de acesso
+    Route.get('/grupos', 'GrupoController.index').middleware(['auth','permissao']);
+    Route.post('/alterar-grupo/:id', 'GrupoController.edit').middleware(['auth']);
+    Route.post('/novo-grupo', 'GrupoController.save').middleware(['auth']);
+    Route.delete('/excluir-grupo/:id', 'GrupoController.delete').middleware(['auth']);
+    // -------------------------- Fim -----------------------------------
+    // Permissão
+    Route.post('/nova-permissao', 'PermissaoController.save').middleware(['auth']);
+    Route.post('/alterar-permissao/:id', 'PermissaoController.edit').middleware(['auth']);
+    Route.get('/permissoes', 'PermissaoController.index').middleware(['auth','permissao']);
+    Route.delete('/excluir-permissao/:id', 'PermissaoController.delete').middleware(['auth']);
+    // -------------------------- Fim -----------------------------------
+    //  Grupo de permissão
+    Route.get('/grupo-permissoes/alterar/:id/:is_selecionado', 'PermissaoController.removerAddPermissaoGrupo').middleware(['auth']);
+    Route.get('/grupo-permissoes/:id', 'PermissaoController.gruposPermissoes').middleware(['auth']);
+    // -------------------------- Fim -----------------------------------
+    /// Usuario
+    Route.get('/usuarios', 'UsuarioController.index').middleware(['auth','permissao']);
+    Route.post('/alterar-usuario/:id', 'UsuarioController.edit').middleware(['auth']);
+    Route.post('/novo-usuario', 'UsuarioController.save');
+    Route.delete('/excluir-usuario/:id', 'UsuarioController.delete').middleware(['auth']);
+    // -------------------------- Fim -----------------------------------
+    /// Avaliações
+    Route.get('/avaliacoes-realizadas', 'AvaliacaoController.index').middleware(['auth','permissao']);
+    // -------------------------- Fim -----------------------------------
+    /// Autenticar
+    Route.post('/auth/entrar', 'AutenticarController.entrar');
+    Route.get('/auth/verificar-token', 'AutenticarController.token');
+    // -------------------------- Fim -----------------------------------
+    // Select Inputs
+    Route.get('/instituicoes-all', 'InstituicaController.selectInputInstituicao');
+    Route.get('/cidades-all', 'CidadeController.selectInputCidades');
+}).prefix('api/v1');

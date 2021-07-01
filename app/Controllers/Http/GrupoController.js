@@ -3,36 +3,26 @@
 const { validateAll } = use('Validator');
 const Database = use('Database');
 const util = require('../../Utils/Util.js');
-const cidadeModel = use('App/Models/Cidade');
+const grupoModel = use('App/Models/Grupo');
 
-class CidadeController {
-
-  async index({ request, response }) {
+class GrupoController {
+  async index({request, response}){
     const page = request.input('page', 1); // Iniciar paginação na página 1
 
     return response.status(200).send({
-      status: true,
-      cidades: await cidadeModel.query().orderBy("nome", "asc").paginate(page, 25)
-    });
-  }
-
-  async selectInputCidades({ request, response }) {
-    return response.status(200).send({
-      status: true,
-      cidades: await cidadeModel.all()
+        status: true,
+        grupos: await grupoModel.query().orderBy("nome","asc").paginate(page, 25)
     });
   }
 
   async save({ request, response, auth }) {
     try {
       const message = {
-        'nome.required': 'Esse campo é obrigatorio',
-        'uf.required': 'Esse campo é obrigatorio'
+        'nome.required': 'Esse campo é obrigatorio'
       };
 
       const validation = await validateAll(request.all(), {
-        nome: 'required',
-        uf: 'required',
+        nome: 'required'
       }, message);
 
       if (validation.fails()) {
@@ -46,24 +36,23 @@ class CidadeController {
       }
 
       const data = request.only([
-        "nome",
-        "uf"
+        "nome"
       ]);
 
-      const cidade = await cidadeModel.create(data);
+      const grupo = await grupoModel.create(data);
 
       response.status(200).send(
         {
           status: true,
-          message: 'Cidade adicionada!',
-          cidade: cidade
+          message: 'Grupo adicionada!',
+          grupo: grupo
         }
       );
     } catch (error) {
       return response.status(500).send(
         {
           status: false,
-          message: 'Não foi possivel adicionar cidade!'
+          message: 'Não foi possivel adicionar!'
         }
       );
     }
@@ -72,13 +61,11 @@ class CidadeController {
   async edit({ params, request, response, auth }) {
     try {
       const message = {
-        'nome.required': 'Esse campo é obrigatorio',
-        'uf.required': 'Esse campo é obrigatorio'
+        'nome.required': 'Esse campo é obrigatorio'
       };
 
       const validation = await validateAll(request.all(), {
-        nome: 'required',
-        uf: 'required',
+        nome: 'required'
       }, message);
 
       if (validation.fails()) {
@@ -92,24 +79,23 @@ class CidadeController {
       }
 
       const data = request.only([
-        "nome",
-        "uf"
+        "nome"
       ]);
 
-      const cidade = await cidadeModel.query().where('id', params.id).update(data).returning('*');
+      const grupo = await grupoModel.query().where('id', params.id).update(data).returning('*');
 
       response.status(200).send(
         {
           status: true,
           message: 'Alteração realizada!',
-          cidade: cidade
+          grupo: grupo
         }
       );
     } catch (error) {
       return response.status(500).send(
         {
           status: false,
-          message: 'Não foi alterar cidade!'
+          message: 'Não foi alterar!'
         }
       );
     }
@@ -117,23 +103,23 @@ class CidadeController {
 
   async delete({ params, request, response, auth }) {
     try {
-      await Database.table('cidade').where('id', params.id).delete().returning('*');
-
+      await Database.table('grupo').where('id', params.id).delete().returning('*');
+    
       response.status(200).send(
         {
           status: true,
-          message: 'Cidade foi excluida!'
+          message: 'Grupo foi excluida!'
         }
       );
     } catch (error) {
       return response.status(200).send(
         {
           status: false,
-          message: 'Não foi possivel excluir cidade!'
+          message: 'Não foi possivel excluir!'
         }
       );
     }
   }
 }
 
-module.exports = CidadeController
+module.exports = GrupoController
