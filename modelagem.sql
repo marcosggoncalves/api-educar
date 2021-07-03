@@ -71,6 +71,7 @@ create table trabalho(
 	id serial primary key,
 	titulo text,
 	documento_url text, 
+	documento_url_reenvio text, 
 	ultimo_status varchar(255) default 'Aguardando documento',
 	usuario_id integer,
 	created_at timestamp default now(),
@@ -95,6 +96,7 @@ create table avaliacao(
 	trabalho_id integer,
 	avaliador_id integer,
 	encaminhado_por integer,
+	documento_avaliador_url text, 
 	nota real,
 	justificativa text,
 	ultimo_status varchar(255) default 'Aguardando coordenador',
@@ -127,6 +129,7 @@ INSERT INTO public.permissao (id, nome, icon, rota_api, rota_web, is_menu, creat
 INSERT INTO public.permissao (id, nome, icon, rota_api, rota_web, is_menu, created_at, updated_at) VALUES (13, 'Trabalhos sem avaliadores', NULL, '/coordenacao-trabalhos', '/coordenacao-trabalhos', true, '2021-07-01 19:37:14', '2021-07-01 19:37:14');
 INSERT INTO public.permissao (id, nome, icon, rota_api, rota_web, is_menu, created_at, updated_at) VALUES (18, 'Avaliações realizadas', NULL, '/avaliacoes-realizadas', '/avaliacoes-realizadas', true, '2021-07-01 19:56:17', '2021-07-01 19:56:17');
 INSERT INTO public.permissao (id, nome, icon, rota_api, rota_web, is_menu, created_at, updated_at) VALUES (14, 'Trabalhos para avaliação', NULL, '/avaliador-trabalhos/', '/avaliador-trabalhos/', false, '2021-07-01 19:38:09', '2021-07-01 19:38:09');
+INSERT INTO public.permissao (id, nome, icon, rota_api, rota_web, is_menu, created_at, updated_at) VALUES (19, 'Submissão de trabalho', NULL, '/', '/', true, '2021-07-01 19:38:09', '2021-07-01 19:38:09');
 
 INSERT INTO public.grupo_permissao (id, is_selecionado, permissao_id, grupo_id, created_at, updated_at) VALUES (53, false, 18, 2, '2021-07-01 19:56:17.867578', '2021-07-01 19:56:17.867578');
 INSERT INTO public.grupo_permissao (id, is_selecionado, permissao_id, grupo_id, created_at, updated_at) VALUES (52, false, 18, 1, '2021-07-01 19:56:17.867578', '2021-07-01 19:56:17.867578');
@@ -167,3 +170,6 @@ INSERT INTO public.grupo_permissao (id, is_selecionado, permissao_id, grupo_id, 
 INSERT INTO public.grupo_permissao (id, is_selecionado, permissao_id, grupo_id, created_at, updated_at) VALUES (51, false, 17, 3, '2021-07-01 19:39:33.605295', '2021-07-01 19:39:33.605295');
 INSERT INTO public.grupo_permissao (id, is_selecionado, permissao_id, grupo_id, created_at, updated_at) VALUES (42, true, 14, 3, '2021-07-01 19:38:09.461498', '2021-07-01 19:38:09.461498');
 INSERT INTO public.grupo_permissao (id, is_selecionado, permissao_id, grupo_id, created_at, updated_at) VALUES (43, true, 15, 1, '2021-07-01 19:38:27.805679', '2021-07-01 19:38:27.805679');
+INSERT INTO public.grupo_permissao (id, is_selecionado, permissao_id, grupo_id, created_at, updated_at) VALUES (43, true, 19, 1, '2021-07-01 19:38:27.805679', '2021-07-01 19:38:27.805679');
+INSERT INTO public.grupo_permissao (id, is_selecionado, permissao_id, grupo_id, created_at, updated_at) VALUES (43, false, 19, 2, '2021-07-01 19:38:27.805679', '2021-07-01 19:38:27.805679');
+INSERT INTO public.grupo_permissao (id, is_selecionado, permissao_id, grupo_id, created_at, updated_at) VALUES (43, false, 19, 3, '2021-07-01 19:38:27.805679', '2021-07-01 19:38:27.805679');

@@ -28,6 +28,7 @@
     "@adonisjs/shield": "^1.0.8",
     "@adonisjs/validator": "^5.1.0",
     "adonis-validation-provider": "^3.0.5",
+    "md5": "^2.3.0",
     "pg": "^8.6.0"
   },
   "devDependencies": {},

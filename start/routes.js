@@ -20,6 +20,7 @@ Route.group(() => {
     /// Trabalho
     Route.post('/submeter-trabalho', 'TrabalhoController.submeterTrabalho').middleware(['auth']);
     Route.post('/submeter-arquivo', 'TrabalhoController.submeterTrabalhoArquivo').middleware(['auth']);
+    Route.post('/submeter-arquivo-reenvio/:id', 'TrabalhoController.submeterTrabalhoReenvio').middleware(['auth']);
     Route.post('/avaliar/:id', 'TrabalhoController.avaliarTrabalhoSubmetido').middleware(['auth']);
     Route.post('/encaminhar-trabalho/avaliador', 'TrabalhoController.encaminhaTrabalhorAvaliador').middleware(['auth']);
     Route.get('/coordenacao-trabalhos', 'TrabalhoController.trabalhosSemAvaliadorCoordenador').middleware(['auth','permissao']);

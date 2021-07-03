@@ -2,6 +2,7 @@
 
 const { validateAll } = use('Validator');
 const Database = use('Database');
+const md5 = use('md5');
 const util = require('../../Utils/Util.js');
 const AutorTrabalhoModel = use('App/Models/AutorTrabalho');
 const TrabalhoModel = use('App/Models/Trabalho');
@@ -17,11 +18,10 @@ class TrabalhoController {
     /// 5 - Aguardando Avaliação
     /// 6 - Aguardando coordenador
     /// 7 - Aguardando documento
-    /// 8 - Devolver para correção
 
     switch (status) {
       case 1:
-        return "Devido para correção";
+        return "Devolvido para correção";
         break;
 
       case 2:
@@ -45,6 +45,9 @@ class TrabalhoController {
 
       case 7:
         return "Aguardando documento";
+        break;
+      case 8:
+        return "Reenviado, aguardando coordenador";
         break;
 
     }
@@ -160,32 +163,44 @@ class TrabalhoController {
   }
   /// Listar Trabalhos submetidos
   async meuTrabalhosSubmetidos({ request, response, params }) {
-    const trabalho = await TrabalhoModel.query().where('usuario_id', params.usuario).orderBy("id", "desc").first();
+    const trabalhos = await TrabalhoModel.query().where('usuario_id', params.usuario).orderBy("id", "desc").fetch();
 
-    if (!trabalho) {
+    if (trabalhos && trabalhos.rows.length === 0) {
       return response.status(417).send(
         {
           status: false,
-          message: 'Trabalho não foi localizado!'
+          message: 'Nenhum trabalho localizado!'
         }
       );
     }
 
-    const autores =
-      await Database
-        .select('*')
-        .from('autor')
-        .innerJoin('autor_trabalho', 'autor.id', 'autor_trabalho.autor_id')
-        .where("autor_trabalho.trabalho_id", trabalho.id)
-        .orderBy("autor.nome", "desc");
+    const joinObj = (a, attr) => {
+      var out = [];
 
-    const historicoAvaliacao = await AvaliacaoModel.query().where("trabalho_id", trabalho.id).orderBy("id", "desc").first();
+      for (var i = 0; i < a.length; i++) {
+        out.push(a[i][attr]);
+      }
+
+      return out.join(", ");
+    }
+
+    await Promise.all(trabalhos.rows.map(async (item, index) => {
+      trabalhos.rows[index].autores = await
+        joinObj(
+          await Database
+            .select('autor.nome')
+            .from('autor')
+            .innerJoin('autor_trabalho', 'autor.id', 'autor_trabalho.autor_id')
+            .where("autor_trabalho.trabalho_id", item.id)
+            .orderBy("autor.nome", "desc"), 'nome');
+
+      trabalhos.rows[index].avaliacoes = await AvaliacaoModel.query().where("trabalho_id", item.id).orderBy("id", "desc").fetch();
+
+    }));
 
     return response.status(200).send({
       status: true,
-      trabalho: trabalho,
-      autores: autores,
-      historico: historicoAvaliacao
+      trabalhos: trabalhos
     });
   }
   /// Encaminhar para avaliador
@@ -220,12 +235,28 @@ class TrabalhoController {
         "encaminhado_por",
         "trabalho_id"
       ]);
+      /// Buscar trabalho no banco de dados
+      const trabalho = await TrabalhoModel.query().where('id', data.trabalho_id).orderBy("id", "desc").first();
 
+      if (!trabalho) {
+        return response.status(417).send(
+          {
+            status: false,
+            message: 'Trabalho não foi submetido!'
+          }
+        );
+      }
+      /// Buscar ultima avaliacao
+      const ultimaAvaliacao = await AvaliacaoModel.query()
+        .where('trabalho_id', data.trabalho_id)
+        .orderBy('id', 'desc')
+        .first();
       /// Encaminchar para avaliação
-      await AvaliacaoModel.create({
+      const avaliador = await AvaliacaoModel.create({
         avaliador_id: data.avaliador_id,
         encaminhado_por: data.encaminhado_por,
         trabalho_id: data.trabalho_id,
+        documento_avaliador_url: !ultimaAvaliacao ? trabalho.documento_url : trabalho.documento_url,
         ultimo_status: await this.statusTrabalhos(5) // Aguardando Avaliação
       }, connection);
       /// Alterar status do trabalho
@@ -237,7 +268,8 @@ class TrabalhoController {
       /// Responder frontend
       return response.status(200).send({
         status: true,
-        message: 'Trabalho foi encaminhado para o avaliador.'
+        message: 'Trabalho foi encaminhado para o avaliador.',
+        avaliador: avaliador
       });
     } catch (error) {
       await connection.rollback();
@@ -295,13 +327,8 @@ class TrabalhoController {
           }
         );
       }
-
-      if (data.status === 8) {
-        reeescrita.ultimo_status = await this.statusTrabalhos(1); // Devolvido
-      } else {
-        reeescrita.ultimo_status = await this.statusTrabalhos(data.status); // Aprovado/ ou Reprovado
-      }
-
+      /// Colocar escrita do status
+      reeescrita.ultimo_status = await this.statusTrabalhos(data.status);
       /// Trocar status
       await TrabalhoModel.query().where('id', avaliacaoAberta.trabalho_id).update({
         ultimo_status: reeescrita.ultimo_status,
@@ -426,13 +453,12 @@ class TrabalhoController {
           }
         );
       }
-
       /// Receber documento
       const documentoTrabalho = request.file('documento', {
         extnames: ['pdf']
       })
 
-      const nomeArquivo = `${documentoTrabalho.clientName}_${trabalhoID}_${tituloTrabalho}.pdf`;
+      const nomeArquivo = `${md5(documentoTrabalho.clientName + trabalhoID + tituloTrabalho)}.pdf`;
       /// Mover documento para pasta
       await documentoTrabalho.move('public/uploads', {
         name: nomeArquivo,
@@ -456,7 +482,7 @@ class TrabalhoController {
       /// Trocar status
       await TrabalhoModel.query().where('id', trabalhoID).update({
         ultimo_status: await this.statusTrabalhos(4),
-        documento_url: `/public/uploads/${nomeArquivo}`
+        documento_url: `uploads/${nomeArquivo}`
       });
       await connection.commit();
       /// Responder frontend
@@ -468,10 +494,99 @@ class TrabalhoController {
       );
 
     } catch (error) {
+
+      // Deletar registro para novo envio
+      await Database.table('autor_trabalho').where('trabalho_id', trabalhoID).delete().returning('*');
+      await Database.raw(`delete from autor where id in (select autor_id from autor_trabalho where trabalho_id = ${trabalhoID})`);
+      await Database.table('trabalho').where('id', trabalhoID).delete().returning('*');
+
       return response.status(500).send(
         {
           status: false,
-          message: 'Não foi possivel enviar seu projeto, tente novamente!'
+          message: 'Não foi possivel enviar o documento do seu projeto, tente novamente!'
+        }
+      );
+    }
+  }
+
+  async submeterTrabalhoReenvio({ request, response, params }) {
+    const connection = await Database.beginTransaction();
+
+    try {
+      if (params && !params.id) {
+        return response.status(200).send(
+          {
+            status: true,
+            message: 'Identificação do trabalho não foi informado!'
+          }
+        );
+      }
+
+      const trabalho = await TrabalhoModel.query().where('id', params.id).orderBy("id", "desc").first();
+
+      if (!trabalho) {
+        return response.status(417).send(
+          {
+            status: false,
+            message: 'Trabalho não foi submetido!'
+          }
+        );
+      }
+      /// Receber documento
+      const documentoTrabalho = request.file('documento', {
+        extnames: ['pdf']
+      })
+
+      const nomeArquivo = `${md5(documentoTrabalho.clientName + params.id + trabalho.titulo)}.pdf`;
+      /// Mover documento para pasta
+      await documentoTrabalho.move('public/uploads', {
+        name: nomeArquivo,
+        overwrite: true
+      });
+
+      if (!documentoTrabalho.moved()) {
+        return response.status(500).send(
+          {
+            status: false,
+            message: 'Não foi possivel enviar seu projeto, formato do documento inválido! Envie como .PDF',
+            error: documentoTrabalho.error()
+          }
+        );
+      }
+      /// Buscar ultima avaliacao
+      const ultimaAvaliacao = await AvaliacaoModel.query()
+        .where('trabalho_id', params.id)
+        .orderBy('id', 'desc')
+        .first();
+      /// Encaminchar para avaliação
+      await AvaliacaoModel.create({
+        avaliador_id: ultimaAvaliacao.avaliador_id,
+        encaminhado_por: ultimaAvaliacao.encaminhado_por,
+        trabalho_id: ultimaAvaliacao.trabalho_id,
+        documento_avaliador_url: trabalho.documento_url,
+        ultimo_status: await this.statusTrabalhos(5) // Aguardando Avaliação
+      }, connection);
+      /// Trocar status
+      await TrabalhoModel.query().where('id', params.id).update({
+        ultimo_status: await this.statusTrabalhos(8),
+        documento_url_reenvio: `uploads/${nomeArquivo}`
+      }, connection);
+       /// Comitar inserts no banco de dados
+       await connection.commit();
+      /// Responder frontend
+      return response.status(200).send(
+        {
+          status: true,
+          message: 'Seu trabalho foi reenviado com sucesso!'
+        }
+      );
+    } catch (error) {
+      await connection.rollback();
+
+      return response.status(500).send(
+        {
+          status: false,
+          message: 'Não foi possivel enviar o documento do seu projeto, tente novamente!'
         }
       );
     }
