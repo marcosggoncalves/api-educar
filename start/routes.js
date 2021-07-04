@@ -21,9 +21,9 @@ Route.group(() => {
     Route.post('/submeter-trabalho', 'TrabalhoController.submeterTrabalho').middleware(['auth']);
     Route.post('/submeter-arquivo', 'TrabalhoController.submeterTrabalhoArquivo').middleware(['auth']);
     Route.post('/submeter-arquivo-reenvio/:id', 'TrabalhoController.submeterTrabalhoReenvio').middleware(['auth']);
-    Route.post('/avaliar/:id', 'TrabalhoController.avaliarTrabalhoSubmetido').middleware(['auth']);
+    Route.post('/avaliar/:id', 'TrabalhoController.avaliarTrabalhoSubmetido').middleware(['auth', 'permissao']);
     Route.post('/encaminhar-trabalho/avaliador', 'TrabalhoController.encaminhaTrabalhorAvaliador').middleware(['auth']);
-    Route.get('/coordenacao-trabalhos', 'TrabalhoController.trabalhosSemAvaliadorCoordenador').middleware(['auth']);
+    Route.get('/coordenacao-trabalhos', 'TrabalhoController.trabalhosSemAvaliadorCoordenador').middleware(['auth', 'permissao']);
     Route.get('/coordenacao-avaliadores', 'AvaliacaoController.avaliadores').middleware(['auth']);
     Route.get('/avaliador-trabalhos/:id', 'TrabalhoController.trabalhosSeremAvaliados').middleware(['auth','permissao']);
     Route.get('/meus-trabalhos-submetidos/:usuario', 'TrabalhoController.meuTrabalhosSubmetidos').middleware(['auth','permissao']);
