@@ -122,11 +122,11 @@ INSERT INTO permissao (id, nome, icon, rota_api, rota_web, is_menu) VALUES (3, '
 INSERT INTO permissao (id, nome, icon, rota_api, rota_web, is_menu) VALUES (4, 'Instituições', NULL, '/instituicoes', '/instituicoes', true);
 INSERT INTO permissao (id, nome, icon, rota_api, rota_web, is_menu) VALUES (5, 'Cidades', NULL, '/cidades', '/cidades', true);
 INSERT INTO permissao (id, nome, icon, rota_api, rota_web, is_menu) VALUES (6, 'Trabalhos Recebidos', NULL, '/trabalhos-recebidos', '/trabalhos-recebidos', true);
-INSERT INTO permissao (id, nome, icon, rota_api, rota_web, is_menu) VALUES (7, 'Avaliações encaminhadas', NULL, '/avaliacoes-encaminhadas', '/avaliacoes-realizadas', true);
-INSERT INTO permissao (id, nome, icon, rota_api, rota_web, is_menu) VALUES (8, 'Trabalhos sem avaliação', NULL, '/trabalhos-para-encaminhamento', '/trabalhos-para-encaminhamento', true);
-INSERT INTO permissao (id, nome, icon, rota_api, rota_web, is_menu) VALUES (9, 'Trabalhos para avaliação', 'mdi-badge-account-horizontal-outline', '/avaliacoes', '/avaliador-trabalhos/', true);
+INSERT INTO permissao (id, nome, icon, rota_api, rota_web, is_menu) VALUES (7, 'Avaliações encaminhadas', NULL, '/avaliacoes-realizadas', '/avaliacoes-encaminhadas', true);
+INSERT INTO permissao (id, nome, icon, rota_api, rota_web, is_menu) VALUES (8, 'Trabalhos sem avaliação', NULL, '/coordenacao-trabalhos', '/trabalhos-para-encaminhamento', true);
+INSERT INTO permissao (id, nome, icon, rota_api, rota_web, is_menu) VALUES (9, 'Trabalhos para avaliação', 'mdi-badge-account-horizontal-outline', '/avaliador-trabalhos/', '/avaliacoes', true);
 INSERT INTO permissao (id, nome, icon, rota_api, rota_web, is_menu) VALUES (10, 'Submissão de trabalho', 'mdi-send', '/', '/submeter-projeto', true);
-INSERT INTO permissao (id, nome, icon, rota_api, rota_web, is_menu) VALUES (11, 'Meus Trabalhos', null, '/meus-trabalhos-submetidos', '/', false);
+INSERT INTO permissao (id, nome, icon, rota_api, rota_web, is_menu) VALUES (11, 'Meus Trabalhos', null, '/meus-trabalhos-submetidos/', '/', false);
 -- Permissões do aluno
 INSERT INTO grupo_permissao (is_selecionado, permissao_id, grupo_id) VALUES (true, 10, 1);
 INSERT INTO grupo_permissao (is_selecionado, permissao_id, grupo_id) VALUES (true, 11, 1);
