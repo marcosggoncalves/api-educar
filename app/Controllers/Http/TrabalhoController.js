@@ -68,7 +68,18 @@ class TrabalhoController {
     });
   }
 
+  async contadorTrabalhos({ request, response, params }) {
+    const trabalhos =
+    await Database
+      .raw(`select count(*)`)
+      .from('trabalho')
+      .innerJoin('avaliacao', 'avaliacao.trabalho_id', 'trabalho.id')
+      .where("avaliacao.ultimo_status", this.statusTrabalhos)
+      .orderBy("avaliacao.ultimo_status", "asc")
+      .paginate(page, 25);
+  }
   /// Listar todos trabalhos que ainda não possui avaliador vinculado
+  
   async trabalhosSemAvaliadorCoordenador({ request, response }) {
     const page = request.input('page', 1);
 
@@ -456,7 +467,7 @@ class TrabalhoController {
     //verificar email para alunos 
 
     try{
-      
+
       if(trabalho === 'teste'){
 
         response.json(200, {
