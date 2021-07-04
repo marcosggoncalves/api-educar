@@ -155,7 +155,10 @@ class PermissaoController {
     return response.status(200).send({
       status: true,
       permissoes: await Database
-        .select('grupo.nome', 'grupo.id as acesso_id', 'grupo_permissao.is_selecionado', 'permissao.*', 'grupo_permissao.id as id_grupo_permissao')
+        .select('grupo.nome', 
+        'grupo.id as acesso_id',
+        'grupo_permissao.is_selecionado', 
+        'permissao.*', 'grupo_permissao.id as id_grupo_permissao')
         .table('grupo')
         .innerJoin('grupo_permissao', 'grupo_permissao.grupo_id', 'grupo.id')
         .innerJoin('permissao', 'grupo_permissao.permissao_id', 'permissao.id')

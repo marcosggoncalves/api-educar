@@ -9,17 +9,39 @@ class UsuarioController {
   async index({ request, response }) {
     const page = request.input('page', 1); // Iniciar paginação na página 1
     const usuarios = await Database
-      .select('usuario.id','usuario.email', 'usuario.tipo_usuario', 'usuario.nome', 'usuario.grupo_id', 'grupo.nome as grupo_acesso', 'instituicao.nome as instituicao_nome')
+      .select('usuario.id',
+      'usuario.email',
+       'usuario.tipo_usuario', 
+       'usuario.nome', 
+       'usuario.grupo_id', 
+       'grupo.nome as grupo_acesso', 'instituicao.nome as instituicao_nome')
       .from('usuario')
       .innerJoin('grupo', 'grupo.id', 'usuario.grupo_id')
       .innerJoin('instituicao', 'instituicao.id', 'usuario.instituicao_id')
       .orderBy('grupo.nome', 'asc')
       .paginate(page, 25);
 
-    return response.status(200).send({
-      status: true,
-      usuarios: usuarios
-    });
+    // seleciona os usuarios por nivel de permissao
+    
+    try{ 
+        const usuariosGrupo = await Database
+        .select('usuario.id', 'usuario.nome', 'usuario.grupo_id')
+        .from('usuario')
+        .innerJoin('grupo', 'grupo.id', 'usuario.grupo.')
+        .innerJoin('grupo_permissao', 'grupo_permissao.permissao_id', 'grupo_permissao.id')
+        .orderBy('usuario.nome', 'asc').paginate(page, 15)
+
+        response.status(200).send({
+          status: true,
+          usuariosGrupo: usuariosGrupo
+        })
+    }catch (error) {
+      response.status(500).send({
+        status: false,
+        message: 'não foi possivel finalizar a ação'
+      })
+
+    }
   }
 
   async save({ request, response, auth }) {
@@ -78,6 +100,12 @@ class UsuarioController {
         }
       );
     }
+  }
+
+  async queryFilterPermissao({ params, response, request }) {
+      const data = request.only([''])
+
+
   }
 
   async edit({ params, request, response, auth }) {

@@ -456,6 +456,7 @@ class TrabalhoController {
     //verificar email para alunos 
 
     try{
+      
       if(trabalho === 'teste'){
 
         response.json(200, {
