@@ -4,6 +4,7 @@ const { validateAll } = use('Validator');
 const Database = use('Database');
 const util = require('../../Utils/Util.js');
 const usuarioModel = use('App/Models/Usuario');
+const Hash = use('Hash');
 
 class UsuarioController {
   async index({ request, response }) {
@@ -118,6 +119,9 @@ class UsuarioController {
         "tipo_usuario",
         "instituicao_id"
       ]);
+
+      //encrypt
+      data.senha =  await Hash.make(data.senha);
 
       const usuario = await usuarioModel.query().where('id', params.id).update(data).returning('*');
 

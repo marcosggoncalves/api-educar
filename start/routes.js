@@ -23,18 +23,12 @@ Route.group(() => {
     Route.post('/submeter-arquivo-reenvio/:id', 'TrabalhoController.submeterTrabalhoReenvio').middleware(['auth']);
     Route.post('/avaliar/:id', 'TrabalhoController.avaliarTrabalhoSubmetido').middleware(['auth']);
     Route.post('/encaminhar-trabalho/avaliador', 'TrabalhoController.encaminhaTrabalhorAvaliador').middleware(['auth']);
-    Route.get('/coordenacao-trabalhos', 'TrabalhoController.trabalhosSemAvaliadorCoordenador').middleware(['auth','permissao']);
+    Route.get('/coordenacao-trabalhos', 'TrabalhoController.trabalhosSemAvaliadorCoordenador').middleware(['auth']);
+    Route.get('/coordenacao-avaliadores', 'AvaliacaoController.avaliadores').middleware(['auth']);
     Route.get('/avaliador-trabalhos/:id', 'TrabalhoController.trabalhosSeremAvaliados').middleware(['auth','permissao']);
     Route.get('/meus-trabalhos-submetidos/:usuario', 'TrabalhoController.meuTrabalhosSubmetidos').middleware(['auth','permissao']);
-    Route.get('/visualizar-trabalho/:trabalho', 'TrabalhoController.visualizarTrabalho').middleware(['auth','permissao']);
     Route.get('/visualizar-trabalho-detalhado/:trabalho', 'TrabalhoController.visualizarTrabalhoDetalhado').middleware(['auth','permissao']);
     Route.get('/trabalhos-recebidos', 'TrabalhoController.index').middleware(['auth','permissao']);
-    // -------------------------- Fim -----------------------------------
-    /// Autor
-    Route.get('/autores', 'AutorController.index').middleware(['auth','permissao']);
-    Route.post('/novo-autor', 'AutorController.save').middleware(['auth']);
-    Route.post('/alterar-autor/:id', 'AutorController.edit').middleware(['auth']);
-    Route.delete('/excluir-autor/:id', 'AutorController.delete').middleware(['auth']);
     // -------------------------- Fim -----------------------------------
     /// Cidade
     Route.get('/cidades', 'CidadeController.index').middleware(['auth','permissao']);
@@ -65,7 +59,7 @@ Route.group(() => {
     Route.get('/grupo-permissoes/:id', 'PermissaoController.gruposPermissoes').middleware(['auth']);
     // -------------------------- Fim -----------------------------------
     /// Usuario
-    Route.get('/usuarios', 'UsuarioController.index').middleware(['auth','permissao']);
+    Route.get('/usuarios', 'UsuarioController.index').middleware(['auth', 'permissao']);
     Route.post('/alterar-usuario/:id', 'UsuarioController.edit').middleware(['auth']);
     Route.post('/novo-usuario', 'UsuarioController.save');
     Route.delete('/excluir-usuario/:id', 'UsuarioController.delete').middleware(['auth']);
@@ -80,4 +74,5 @@ Route.group(() => {
     // Select Inputs
     Route.get('/instituicoes-all', 'InstituicaController.selectInputInstituicao');
     Route.get('/cidades-all', 'CidadeController.selectInputCidades');
+    Route.get('/grupos-all', 'GrupoController.selectInputGrupos');
 }).prefix('api/v1');

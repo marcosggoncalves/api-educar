@@ -15,6 +15,13 @@ class GrupoController {
     });
   }
 
+  async selectInputGrupos({request, response}){
+    return response.status(200).send({
+        status: true,
+        grupos: await grupoModel.all()
+    });
+  }
+
   async save({ request, response, auth }) {
     try {
       const message = {
