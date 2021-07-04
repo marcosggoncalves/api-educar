@@ -8,6 +8,7 @@ const AutorTrabalhoModel = use('App/Models/AutorTrabalho');
 const TrabalhoModel = use('App/Models/Trabalho');
 const AutoresModel = use('App/Models/Autor');
 const AvaliacaoModel = use('App/Models/Avaliacao');
+const Mail = use('Mail');
 
 class TrabalhoController {
 
@@ -80,7 +81,18 @@ class TrabalhoController {
     });
   }
 
+  async contadorTrabalhos({ request, response, params }) {
+    const trabalhos =
+    await Database
+      .raw(`select count(*)`)
+      .from('trabalho')
+      .innerJoin('avaliacao', 'avaliacao.trabalho_id', 'trabalho.id')
+      .where("avaliacao.ultimo_status", this.statusTrabalhos)
+      .orderBy("avaliacao.ultimo_status", "asc")
+      .paginate(page, 25);
+  }
   /// Listar todos trabalhos que ainda não possui avaliador vinculado
+  
   async trabalhosSemAvaliadorCoordenador({ request, response }) {
     const page = request.input('page', 1);
 
@@ -201,7 +213,9 @@ class TrabalhoController {
             .where("autor_trabalho.trabalho_id", item.id)
             .orderBy("autor.nome", "desc"), 'nome');
 
-      trabalhos.rows[index].avaliacoes = await AvaliacaoModel.query().where("trabalho_id", item.id).orderBy("id", "desc").fetch();
+      trabalhos.rows[index].avaliacoes = await AvaliacaoModel.query()
+      .where("trabalho_id", item.id)
+      .orderBy("id", "desc").fetch();
 
     }));
 
@@ -448,6 +462,40 @@ class TrabalhoController {
       );
     }
   }
+
+  async enviarEmailParaAutor({ request, response, MailProvider}) {
+
+    const autor = request.only(['email', 'nome'])
+    const email = request.only(['ultimo_status'])
+    const trabalho = await TrabalhoModel.create(email)
+    const destinatarioEmail = AutoresModel.create(autor)
+
+    await Mail.send('teste', trabalho.toJson(), (message)=> {
+      message.to(destinatarioEmail.email)
+      .from('coordernacao@email')
+      .subject('AVALIAÇÃO CORRIGIDA')
+    })
+
+    //verificar email para alunos 
+
+    try{
+
+      if(trabalho === 'teste'){
+
+        response.json(200, {
+          message: 'success',
+          status: true
+        })
+      }
+    }catch(e){
+      response.json(422,{
+        message: 'erro ao enviar email',
+        status:false
+      })
+    }
+  }
+
+
 
   async submeterTrabalhoArquivo({ request, response }) {
     const connection = await Database.beginTransaction();
