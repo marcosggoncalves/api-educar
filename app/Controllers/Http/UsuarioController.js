@@ -37,7 +37,7 @@ class UsuarioController {
         'email.required': 'Esse campo é obrigatorio',
         'grupo_id.required': 'Esse campo é obrigatorio',
         'tipo_usuario.required': 'Esse campo é obrigatorio',
-        'instituicao_id.required': 'Esse campo é obrigatorio'
+        'instituicao_id.nullable': 'Esse campo é obrigatorio'
       };
 
       const validation = await validateAll(request.all(), {
@@ -46,7 +46,7 @@ class UsuarioController {
         email: 'required',
         grupo_id: 'required',
         tipo_usuario: 'required',
-        instituicao_id: 'required',
+        instituicao_id: 'nullable',
       }, message);
 
       if (validation.fails()) {
