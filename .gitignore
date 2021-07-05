@@ -9,4 +9,4 @@ database/*.sqlite
 .history
 .idea
 
-.env
+# .env
