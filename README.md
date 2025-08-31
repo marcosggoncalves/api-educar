@@ -1,4 +1,4 @@
-# Aplicação para avalições e submissões de projetos acqdemicos.
+# Aplicação para avalições e submissões de projetos acadêmico.
 
 Framework AdonisJS 4 + Postgres.
 
