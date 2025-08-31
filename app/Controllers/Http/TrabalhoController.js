@@ -3,7 +3,7 @@
 const { validateAll } = use('Validator');
 const Database = use('Database');
 const md5 = use('md5');
-const util = require('../../Utils/Util.js');
+const Util = require('../../Utils/Util.js');
 const AutorTrabalhoModel = use('App/Models/AutorTrabalho');
 const TrabalhoModel = use('App/Models/Trabalho');
 const AutoresModel = use('App/Models/Autor');
@@ -11,6 +11,9 @@ const AvaliacaoModel = use('App/Models/Avaliacao');
 const Mail = use('Mail');
 
 class TrabalhoController {
+  constructor(){
+    this.util = new Util();
+  }
 
   async joinObj(a, attr) {
     var out = [];
@@ -327,7 +330,7 @@ class TrabalhoController {
           {
             status: false,
             message: 'Não foi possivel salvar!',
-            validation: new util().errorsFormat(validation.messages())
+            validation:this.util.errorsFormat(validation.messages())
           }
         );
       }
@@ -404,7 +407,7 @@ class TrabalhoController {
           {
             status: false,
             message: 'Não foi possivel salvar!',
-            validation: new util().errorsFormat(validation.messages())
+            validation:this.util.errorsFormat(validation.messages())
           }
         );
       }
@@ -494,8 +497,6 @@ class TrabalhoController {
       })
     }
   }
-
-
 
   async submeterTrabalhoArquivo({ request, response }) {
     const connection = await Database.beginTransaction();
@@ -641,4 +642,4 @@ class TrabalhoController {
   }
 }
 
-module.exports = TrabalhoController
+module.exports = TrabalhoController;

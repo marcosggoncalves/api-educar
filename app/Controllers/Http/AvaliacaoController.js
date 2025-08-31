@@ -58,4 +58,4 @@ class AvaliacaoController {
     }
 }
 
-module.exports = AvaliacaoController
+module.exports = AvaliacaoController;

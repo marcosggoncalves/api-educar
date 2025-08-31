@@ -2,10 +2,13 @@
 
 const { validateAll } = use('Validator');
 const Database = use('Database');
-const util = require('../../Utils/Util.js');
+const Util = require('../../Utils/Util.js');
 const cidadeModel = use('App/Models/Cidade');
 
 class CidadeController {
+  constructor(){
+    this.util = new Util();
+  }
 
   async index({ request, response }) {
     const page = request.input('page', 1); // Iniciar paginação na página 1
@@ -40,7 +43,7 @@ class CidadeController {
           {
             status: false,
             message: 'Não foi possivel salvar!',
-            validation: new util().errorsFormat(validation.messages())
+            validation:this.util.errorsFormat(validation.messages())
           }
         );
       }
@@ -86,7 +89,7 @@ class CidadeController {
           {
             status: false,
             message: 'Não foi possivel salvar!',
-            validation: new util().errorsFormat(validation.messages())
+            validation:this.util.errorsFormat(validation.messages())
           }
         );
       }
@@ -136,4 +139,4 @@ class CidadeController {
   }
 }
 
-module.exports = CidadeController
+module.exports = CidadeController;

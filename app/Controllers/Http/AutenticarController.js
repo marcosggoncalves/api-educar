@@ -2,9 +2,13 @@
 
 const Database = use('Database');
 const { validateAll } = use('Validator');
-const util = require('../../Utils/Util.js');
+const Util = require('../../Utils/Util.js');
 
 class AutenticarController {
+    constructor(){
+        this.util = new Util();
+    }
+
     async token({ request, response, auth }) {
         try {
             return {
@@ -35,7 +39,7 @@ class AutenticarController {
                 {
                     status: false,
                     message: 'Não foi possivel acessar painel, acesso negado!',
-                    validation: new util().errorsFormat(validation.messages())
+                    validation:this.util.errorsFormat(validation.messages())
                 }
             );
         }
@@ -93,4 +97,4 @@ class AutenticarController {
     }
 }
 
-module.exports = AutenticarController
+module.exports = AutenticarController;

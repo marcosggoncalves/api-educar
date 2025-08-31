@@ -2,11 +2,15 @@
 
 const { validateAll } = use('Validator');
 const Database = use('Database');
-const util = require('../../Utils/Util.js');
+const Util = require('../../Utils/Util.js');
 const usuarioModel = use('App/Models/Usuario');
 const Hash = use('Hash');
 
 class UsuarioController {
+  constructor(){
+    this.util = new Util();
+  }
+
   async index({ request, response }) {
     const page = request.input('page', 1); // Iniciar paginação na página 1
     
@@ -45,8 +49,7 @@ class UsuarioController {
         senha: 'required',
         email: 'required',
         grupo_id: 'required',
-        tipo_usuario: 'required',
-        instituicao_id: 'nullable',
+        tipo_usuario: 'required'
       }, message);
 
       if (validation.fails()) {
@@ -54,7 +57,7 @@ class UsuarioController {
           {
             status: false,
             message: 'Não foi possivel salvar!',
-            validation: new util().errorsFormat(validation.messages())
+            validation: this.util.errorsFormat(validation.messages())
           }
         );
       }
@@ -87,17 +90,10 @@ class UsuarioController {
     }
   }
 
-  async queryFilterPermissao({ params, response, request }) {
-    const data = request.only([''])
-
-
-  }
-
   async edit({ params, request, response, auth }) {
     try {
       const message = {
         'nome.required': 'Esse campo é obrigatorio',
-        'senha.required': 'Esse campo é obrigatorio',
         'email.required': 'Esse campo é obrigatorio',
         'grupo_id.required': 'Esse campo é obrigatorio',
         'tipo_usuario.required': 'Esse campo é obrigatorio',
@@ -106,7 +102,6 @@ class UsuarioController {
 
       const validation = await validateAll(request.all(), {
         nome: 'required',
-        senha: 'required',
         email: 'required',
         grupo_id: 'required',
         tipo_usuario: 'required',
@@ -118,7 +113,7 @@ class UsuarioController {
           {
             status: false,
             message: 'Não foi possivel salvar!',
-            validation: new util().errorsFormat(validation.messages())
+            validation: this.util.errorsFormat(validation.messages())
           }
         );
       }
@@ -131,9 +126,8 @@ class UsuarioController {
         "tipo_usuario",
         "instituicao_id"
       ]);
-
-      //encrypt
-      data.senha = await Hash.make(data.senha);
+      
+      data.senha = data.senha != null?  await Hash.make(data.senha) : undefined;
 
       const usuario = await usuarioModel.query().where('id', params.id).update(data).returning('*');
 
@@ -175,4 +169,4 @@ class UsuarioController {
   }
 }
 
-module.exports = UsuarioController
+module.exports = UsuarioController;
