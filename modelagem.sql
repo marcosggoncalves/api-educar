@@ -141,3 +141,7 @@ INSERT INTO grupo_permissao (is_selecionado, permissao_id, grupo_id) VALUES (tru
 INSERT INTO grupo_permissao (is_selecionado, permissao_id, grupo_id) VALUES (true, 8, 2);
 -- Permissões do avaliador
 INSERT INTO grupo_permissao (is_selecionado, permissao_id, grupo_id) VALUES (true, 9, 3);
+-- Usuários
+INSERT INTO usuario VALUES (3, 'Acesso Avaliador', '$2a$10$7Ksx42WSauGw2GfMSFatre0QbKygbi11ysVL5Ku4IViNQ.hj8y7ym', 'avaliador@gmail.com', 3, 'Organização', 1, '2025-08-31 11:19:25', '2025-08-31 13:51:28');
+INSERT INTO usuario VALUES (2, 'Acesso Coordenação', '$2a$10$n0LY2BpNccJEkNCnnF1EwuDF2bhJN5FhW3Etm3eqd6tkcA100NVdO', 'coordenacao@gmail.com', 2, 'Organização', 1, '2025-08-31 11:17:21', '2025-08-31 13:51:53');
+INSERT INTO usuario VALUES (1, 'Acesso Aluno', '$2a$10$I/NYcWxKKEwhu/CEXW.VYuZ5EGFu7.eR1DeabTKFqyQJOVBwlpdQK', 'aluno@gmail.com', 1, 'Alunos', 1, '2025-08-31 11:13:47', '2025-08-31 13:56:18');
